@@ -1,7 +1,8 @@
-package me.gv7;
+package me.gv7.springbootVuldb;
 
 import static org.junit.Assert.assertTrue;
 
+import me.gv7.woodpecker.plugin.SpringbootUtils;
 import net.dongliu.requests.Requests;
 import org.junit.Test;
 
@@ -18,12 +19,9 @@ public class AppTest
      */
     @Test
     public void shouldAnswerWithTrue() {
-        final String url = "http://118.31.122.159:9999/"+"actuator/env";
+        final String url = "https://srm.tisco.com.cn/"+"actuator/env";
         String response = Requests.get(url).verify(false).send().readToText();
-        if (response.contains("111")){
-            System.out.println("OK");
-        }
-        System.out.println(response);
+        SpringbootUtils.EnvParser(response);
 
 //        final String url = "http://47.115.79.250:8500/"+"actuator/env";
 //        InputStream stream = Requests.get(url).verify(false).send().body();

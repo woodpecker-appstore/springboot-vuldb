@@ -17,7 +17,7 @@ public class SpringBootActuatorsInfoPlugin implements IVulPlugin {
 
         callbacks.setVulPluginName("Springboot接口探测");
         callbacks.setVulPluginVersion("0.1.0");
-        callbacks.setVulPluginAuthor("Frost Blue");
+        callbacks.setVulPluginAuthor("notyeat");
         callbacks.setVulCVSS(9.5);
         callbacks.setVulName("Springboot接口探测");
         callbacks.setVulDescription("接口信息泄露，某些敏感接口会造成RCE");
