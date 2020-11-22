@@ -5,9 +5,9 @@ import me.gv7.woodpecker.plugin.exploits.SpringBootActuatorsInfoExploit;
 
 public class SpringBootPocs implements IPoc {
     @Override
-    public IScanResult doCheck(ITarget target, IResultOutput iResultOutput) {
+    public IScanResult doVerify(ITarget target, IResultOutput resultOutput) {
         IScanResult result = SpringBootActuatorsInfoPlugin.pluginHelper.createScanResult();
-        iResultOutput.infoPrintln("[+] "+target.getAddress()+"攻击成功!\n");
+        resultOutput.infoPrintln("[+] "+target.getAddress()+"攻击成功!\n");
         result.setExists(true);
         return result;
     }
