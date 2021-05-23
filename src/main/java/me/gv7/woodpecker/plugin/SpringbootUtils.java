@@ -4,9 +4,10 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import me.gv7.woodpecker.plugin.Bean.PropertiesBean;
-import net.dongliu.requests.RawResponse;
-import net.dongliu.requests.Requests;
+import me.gv7.woodpecker.requests.RawResponse;
+import me.gv7.woodpecker.requests.Requests;
 
+import java.util.Map;
 import java.util.Scanner;
 import java.util.UUID;
 
@@ -14,7 +15,7 @@ public class SpringbootUtils {
 
     public static boolean SpringbootCheck(String addr){
         final String url = addr+"404";
-        RawResponse response = Requests.get(url).verify(false).timeout(5000).send();
+        RawResponse response = Requests.get(url).verify(false).timeout(10000).send();
         final int statusCode = response.statusCode();
         final String respText = response.readToText();
         if (statusCode == 404 || statusCode == 403){
@@ -25,9 +26,51 @@ public class SpringbootUtils {
 
     public static boolean check404(String addr){
         final String url = addr + UUID.randomUUID();
-        RawResponse response = Requests.get(url).verify(false).send();
+        RawResponse response = Requests.get(url).verify(false).timeout(10000).send();
         final int statusCode = response.statusCode();
         return statusCode == 200;
+    }
+
+    // https://blog.csdn.net/testcs_dn/article/details/79033009/
+    public static boolean checkPoint(String url, RawResponse resp){
+        String s = resp.readToText();
+        // hystrix.stream
+        if (url.contains("hystrix.stream")){
+            return "ping:".contains(s)||"data:".contains(s);
+        // health
+        }else if (url.contains("health")){
+            try {
+                Map res = (Map)JSON.parse(s);
+                return res.containsKey("status")||res.containsKey("diskSpace");
+            }catch (Exception e){
+                return false;
+            }
+        // beans
+        }else if (url.contains("beans")){
+            Map res;
+            try {
+                JSONArray objects = JSON.parseArray(s);
+                for (Object o:objects){
+                    res = (Map)o;
+                    return res.containsKey("bean")||res.containsKey("scope")||res.containsKey("dependencies");
+                }
+            }catch (Exception e){
+                return false;
+            }
+        // configprops
+        }else if (url.contains("configprops")){
+            try {
+                Map res = (Map)JSON.parse(s);
+                return res.containsKey("configurationPropertiesReportEndpoint");
+            }catch (Exception e){
+                return false;
+            }
+        }else if (url.contains("mappings")){
+            return s.contains("bean")||s.contains("method");
+        }else if (url.contains("metrics")){
+            return s.contains("threads")||s.contains("heap");
+        }
+        return false;
     }
 
     public static String scannerOutput(Scanner scanner){

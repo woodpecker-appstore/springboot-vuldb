@@ -38,5 +38,11 @@
             <artifactId>requests</artifactId>
             <version>5.0.8</version>
         </dependency>
+        <dependency>
+            <groupId>me.gv7.woodpecker</groupId>
+            <artifactId>woodpecker-requests</artifactId>
+            <version>0.2.0</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 </project>
