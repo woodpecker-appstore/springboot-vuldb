@@ -2,6 +2,7 @@ package me.gv7.woodpecker.plugin;
 
 public class WoodpeckerPluginManager implements IPluginManager {
     public void registerPluginManagerCallbacks(IPluginManagerCallbacks pluginManagerCallbacks) {
-        pluginManagerCallbacks.registerVulPlugin(new SpringBootActuatorsInfoPlugin());
+        //pluginManagerCallbacks.registerVulPlugin(new SpringBootActuatorsInfoPlugin());
+        pluginManagerCallbacks.registerInfoDetectorPlugin(new SpringBootInfoDetecPlugin());
     }
 }
