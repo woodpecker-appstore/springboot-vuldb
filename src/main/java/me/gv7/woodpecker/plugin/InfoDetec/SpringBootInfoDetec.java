@@ -112,6 +112,7 @@ public class SpringBootInfoDetec implements InfoDetector {
     // Spring Boot env端点存在环境属性覆盖和XStream反序列化漏洞
     private void checkEnvPointV1(String addr,IResultOutput result,LinkedHashMap<String,String> infos){
         final String url = addr+"env";
+        result.infoPrintln("正在检测：\t"+url);
         RawResponse response = getResponse(url);
         String resp = SpringbootUtils.scannerOutput(new Scanner(response.body()));
         if (response.statusCode() ==200){
@@ -133,6 +134,7 @@ public class SpringBootInfoDetec implements InfoDetector {
     // Spring Boot 2.x版本存在H2配置不当导致的RCE，目前非正则判断，测试阶段
     private void checkEnvPointV2(String addr,IResultOutput result,LinkedHashMap<String,String> infos){
         final String url = addr+"actuator/env";
+        result.infoPrintln("正在检测：\t"+url);
         RawResponse response = getResponse(url);
         String resp = SpringbootUtils.scannerOutput(new Scanner(response.body()));
         //String resp = response.readToText();
@@ -153,6 +155,7 @@ public class SpringBootInfoDetec implements InfoDetector {
                 .verify(false)
                 .headers(h2Headers)
                 .send();
+        result.infoPrintln("正在检测：\t"+addr + "actuator/restart");
         if (h2Response.statusCode() == 200){
             infos.put(addr + "actuator/restart", "Success");
             result.successPrintln(" [*]检测到env restart端点,可进行H2 RCE!");
@@ -184,18 +187,22 @@ public class SpringBootInfoDetec implements InfoDetector {
     private void checkJolokiaListPoint(String addr,IResultOutput result,LinkedHashMap<String,String> infos){
         final String url = addr+"jolokia/list";
         RawResponse response = getResponse(url);
+        result.infoPrintln("正在检测：\t"+url);
         checkJolokiaPoint(response, url, result, infos);
     }
 
     private void checkJolokiaActuatorPoint(String addr, IResultOutput result,LinkedHashMap<String,String> infos){
         final String url = addr+"actuator/jolokia/list";
         RawResponse response = getResponse(url);
+        result.infoPrintln("正在检测：\t"+url);
         checkJolokiaPoint(response, url, result, infos);
     }
 
     private void checkH2(String addr, IResultOutput result,LinkedHashMap<String,String> infos){
         final String h2Url1 = addr+"h2";
         final String h2Url2 = addr+"h2-console";
+        result.infoPrintln("正在检测：\t"+h2Url1);
+        result.infoPrintln("正在检测：\t"+h2Url2);
         if(getResponse(h2Url1).statusCode()==200){
             infos.put(h2Url1, "Success");
             result.successPrintln("[*]检测到存在h2 console!");
@@ -209,6 +216,7 @@ public class SpringBootInfoDetec implements InfoDetector {
 
     private void checkJenkins(String addr, IResultOutput result,LinkedHashMap<String,String> infos) {
         final String jenkinsUrl = addr+"jenkins";
+        result.infoPrintln("正在检测：\t"+jenkinsUrl);
         if (getResponse(jenkinsUrl).statusCode()==200){
             infos.put(jenkinsUrl, "Success");
             result.successPrintln("[*]检测到存在Jenkins!");
@@ -232,6 +240,7 @@ public class SpringBootInfoDetec implements InfoDetector {
     private boolean checkPoint(String addr,String point,IResultOutput result, LinkedHashMap<String,String> infos){
         final String url = addr+point;
         RawResponse response = getResponse(url);
+        result.infoPrintln("正在检测：\t"+url);
         if (response.statusCode()==200){
             if (SpringbootUtils.checkPoint(url, response)){
                 result.successPrintln("检测到 "+ point +"端点,已做验证: "+ url);
